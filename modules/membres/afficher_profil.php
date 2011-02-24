@@ -1,5 +1,16 @@
 <?php
 // Pas de v&#233;rification de droits d'acc&#232;s n&#233;cessaire : tout le monde peut voir un profil utilisateur :)
+include_once CHEMIN_LIB.'table.php';
+
+$tab = new Table("test", 1);
+$tab->add_new_row(array("th","titre1", "width=100px"), array("th", "titre2"));
+$tab->add_new_row(array("td","texte2", "align=right"), array("td", "texte2"));
+$tab->add_new_row(array("td","texte3", "align=right"), array("td", "texte3"));
+$tab->add_new_row(array("td","texte4", "align=right"), array("td", "texte4"));
+$tab->caption("test");
+
+echo $tab;
+
 
 // Si le param&#232;tre id est manquant ou invalide
 if (empty($_GET['id']) or !is_numeric($_GET['id'])) {
