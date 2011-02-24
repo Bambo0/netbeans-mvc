@@ -66,3 +66,13 @@ span.label_profil {
 	font-weight: bold;
 }
 
+
+/*----TABLEAU----*/
+
+#test .ligneP{
+    background-color: #FFFFFF;
+}
+
+#test .ligneI{
+    background-color: #F0F9FE;
+}
