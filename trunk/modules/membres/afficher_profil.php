@@ -2,11 +2,13 @@
 // Pas de v&#233;rification de droits d'acc&#232;s n&#233;cessaire : tout le monde peut voir un profil utilisateur :)
 include_once CHEMIN_LIB.'table.php';
 
-$tab = new Table("test", 1, -1);
-$tab->add_new_row(array("th","a", "width=100px"), array("th", "d"), array("th", "c"));
-$tab->add_new_row(array("td","b", "align=right"), array("td", "c"), array("td", "a"));
-$tab->add_new_row(array("td","c", "align=right"), array("td", "a"), array("td", "b"));
-$tab->add_new_row(array("td","d", "align=right"), array("td", "b"), array("td", "d"));
+$tab = new Table("test", 1, 2);
+$tab->add_en_tete("truc", "machin", "chose")
+        ->getCell(0)->setAttributs("width=100px");
+$tab->add_ligne("<b>a</b>", "d", "c");
+$tab->add_ligne("b", "c", "a");
+$tab->add_ligne("c", "a", "b");
+$tab->add_ligne("d", "b", "d");
 $tab->caption("test");
 
 echo $tab;
