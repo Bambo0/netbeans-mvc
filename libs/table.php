@@ -3,8 +3,8 @@
 class Table{
 
     protected $caption;
-    protected $lignes;
-    protected $numLigne;
+    protected $en_tete;//tableau de th
+    protected $lignes;//tableau de Table_Ligne
     protected $alternance;
     // si = 0 non sinon alternance des id de ligne (ex css : blanc/gris)
     protected $ordre;
@@ -22,20 +22,27 @@ class Table{
         $this->ordre      = $ordre;
     }
     
-    public function add_new_row(){
-        $array_args = func_get_args();
+    public function add_en_tete(){
+        $value_args = func_get_args();
+        //creation des cellules
+        foreach ($value_args as $value) {
+            $tempCell    = new Table_Cellule($value, 'th');
+            $tempCells[] = $tempCell;
+        }
+        $this->en_tete = new Table_Ligne($tempCells);
+        return $this->en_tete;
+    }
+
+    public function add_ligne(){
+        $value_args = func_get_args();
         //creation des cellules
         $cptTri = 0;
-        foreach ($array_args as $value) {
+        foreach ($value_args as $value) {
             //mise en place du tri
             if (abs($this->ordre) - 1 == $cptTri){
-                $this->ordreliste[] = $value[1];
+                $this->ordreliste[] = $value;
             }
-            if (count($value) == 3){
-                $tempCell = new Table_Cellule($value[0], $value[1], $value[2]);
-            } else {
-                $tempCell = new Table_Cellule($value[0], $value[1]);
-            }
+            $tempCell    = new Table_Cellule($value);
             $tempCells[] = $tempCell;
             $cptTri++;
         }
@@ -43,83 +50,81 @@ class Table{
     }
 
     public function  __toString() {
-        //tri du tableau
-        include_once CHEMIN_LIB.'string.php';
-        //if (contains($string, $content))
-        /////-----------------------------------------------------
-        print_r($this->ligneNumero(0)->getCell(0)->getKey());
-        /////-----------------------------------------------------
         if ($this->ordre != 0){
             array_multisort($this->ordreliste, $this->lignes);
         }
+
         if ($this->ordre < 0){
             $this->lignes = array_reverse($this->lignes);
         }
+
         $o = '<table id="'.$this->id.'">'."\n";
 
         if (!empty($this->caption)){
             $o .= "\t".'<caption>'.$this->caption.'</caption>'."\n";
         }
 
+        if (!empty($this->en_tete)){
+            $o .= $this->en_tete;
+        }
+        $cptLigne = 0;
         foreach ($this->lignes as $value) {
             if ($this->alternance == 1){
-                $o .= $this->mettreAlternance($value, $this->numLigne);
-                $this->numLigne ++;
+                $o .= $this->mettreAlternance($value, $cptLigne);
+                $cptLigne ++;
             } else {
                 $o .= $value;
             }
-            
         }
-
         $o .= '</table>'."\n";
         return $o;
     }
 
     public function mettreAlternance($value, $numLigne){
         //mettre en place id="" aprés <tr [...] >
-            $retour = substr($value, 0, 4);
-            if ($numLigne%2 == 0){
-                $retour .= ' class="ligneP"';
-            } else {
-                $retour .= ' class="ligneI"';
-            }
-            $retour .= substr($value, 4);
-            return $retour;
-    }
-
-    public function ligneNumero($numLigne){
-        return $this->lignes[$numLigne];
+        $retour = substr($value, 0, 4);
+        if ($numLigne%2 == 0){
+            $retour .= ' class="ligneP"';
+        } else {
+            $retour .= ' class="ligneI"';
+        }
+        $retour .= substr($value, 4);
+        return $retour;
     }
 
     public function caption($caption){
         $this->caption = $caption;
+    }
+
+    public function getLigneNumero($numLigne){
+        return $this->lignes[$numLigne];
     }
 }
 
 class Table_Ligne{
 
     protected $ligne;
+    protected $attributs;
 
     public function __construct($cellules) {
-        $this->ligne    = array();
-
+        $this->ligne     = array();
+        $this->attributs = '';
         foreach ($cellules as $cellule){
-            $celluleTmp = new Table_Cellule($cellule->getKey(),
-                                            $cellule->getValue(),
-                                            $cellule->getAttributs());
-            $this->add_cell($celluleTmp);
+            $this->add_cell($cellule);
         }
     }
 
     public function __toString() {
-        $o = "\t".'<tr>'."\n";
-
+        $o = "\t".'<tr '.$this->attributs.'>'."\n";
         foreach ($this->ligne as $value) {
             $o .= $value;
         }
-
         $o .= "\t".'</tr>'."\n";
         return $o;
+    }
+
+    public function add_attributs($attributs){
+        $this->attributs = $attributs;
     }
     
     public function add_cell($cellule){
@@ -134,31 +139,32 @@ class Table_Ligne{
 }
 
 class Table_Cellule{
-    protected $key;
+    protected $balise;
     protected $value;
     protected $attributs;
 
-    public function __construct($key, $value, $attributs = '') {
+    public function __construct($value, $balise = 'td', $attributs = '') {
         $this->attributs = $attributs;
-        $this->key       = $key;
+        $this->balise    = $balise;
         $this->value     = $value;
     }
     
     public function __toString() {
-        //attributs a voir
-        $o = "\t"."\t".'<'.$this->key.' '.$this->attributs.'>'.$this->value.
-                        '</'.$this->key.'>'."\n";
-        
+        $o = "\t"."\t".'<'.$this->balise.' '.$this->attributs.'>'.$this->value.
+                        '</'.$this->balise.'>'."\n";
         return $o;
     }
-    public function getKey(){
-        return $this->key;
+    public function getBalise(){
+        return $this->balise;
     }
     public function getValue(){
         return $this->value;
     }
     public function getAttributs(){
         return $this->attributs;
+    }
+    public function setAttributs($attributs){
+        $this->attributs = $attributs;
     }
 }
 ?>
