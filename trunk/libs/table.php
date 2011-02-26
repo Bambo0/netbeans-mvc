@@ -25,9 +25,15 @@ class Table{
     public function add_en_tete(){
         $value_args = func_get_args();
         //creation des cellules
+        $numCol = 0;
         foreach ($value_args as $value) {
-            $tempCell    = new Table_Cellule($value, 'th');
+            if ($this->ordre == 0){
+                $tempCell = new Table_Cellule($value, 'th');
+            } else {
+                $tempCell = new Table_Cellule($value, 'th', '', 1, $numCol);
+            }
             $tempCells[] = $tempCell;
+            $numCol++;
         }
         $this->en_tete = new Table_Ligne($tempCells);
         return $this->en_tete;
@@ -142,16 +148,32 @@ class Table_Cellule{
     protected $balise;
     protected $value;
     protected $attributs;
+    protected $fleche;
+    protected $numCol;
 
-    public function __construct($value, $balise = 'td', $attributs = '') {
+    public function __construct($value, 
+                                $balise = 'td',
+                                $attributs = '',
+                                $fleche = 0,
+                                $numCol = 0) {
+        
         $this->attributs = $attributs;
         $this->balise    = $balise;
         $this->value     = $value;
+        $this->fleche    = $fleche;
+        $this->numCol    = $numCol;
     }
     
     public function __toString() {
-        $o = "\t"."\t".'<'.$this->balise.' '.$this->attributs.'>'.$this->value.
-                        '</'.$this->balise.'>'."\n";
+        $o  = "\t"."\t".'<'.$this->balise.' '.$this->attributs.'>'.$this->value;
+        if ($this->fleche != 0){
+            $o .= '<a href="';
+            $o .= recupereURLsansFleche($_SERVER['REQUEST_URI']);
+            $o .= '&amp;numCol='.$this->numCol.'">'.'<img src="'.CHEMIN_IMAGES.'flecheD.png"/>'.'</a>';
+            $o .= '<img src="'.CHEMIN_IMAGES.'flecheC.png"/>';
+        }
+        $o .= '</'.$this->balise.'>'."\n";
+
         return $o;
     }
     public function getBalise(){
@@ -165,6 +187,20 @@ class Table_Cellule{
     }
     public function setAttributs($attributs){
         $this->attributs = $attributs;
+    }
+}
+function recupereURLsansFleche($url) {
+    include_once CHEMIN_LIB.'string.php';
+    if (!contains('numCol=', $url)){
+        return $url;
+    } else {
+        $tabExplode = explode('&', $url);
+        //print_r($tabExplode);
+        $o2 = $tabExplode[0];
+        for ($index = 1; $index < count($tabExplode)-1; $index++) {
+            $o2 .= '&amp;'.$tabExplode[$index];
+        }
+        return $o2;
     }
 }
 ?>
