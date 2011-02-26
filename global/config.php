@@ -11,6 +11,7 @@ define('CHEMIN_VUE',         'modules/'.$module.'/vues/');
 define('CHEMIN_MODELE',      'modeles/');
 define('CHEMIN_LIB',         'libs/');
 define('CHEMIN_VUE_GLOBALE', 'vues_globales/');
+define('CHEMIN_IMAGES',      'images/');
 
 define('DOSSIER_AVATAR', 'images/avatars/');
 
