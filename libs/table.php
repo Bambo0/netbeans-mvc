@@ -4,6 +4,7 @@ class Table{
 
     protected $caption;
     protected $en_tete;//tableau de th
+    protected $att_en_tete;//garde les attributs des en tetes
     protected $lignes;//tableau de Table_Ligne
     protected $alternance;
     // si = 0 non sinon alternance des id de ligne (ex css : blanc/gris)
@@ -19,7 +20,13 @@ class Table{
         $this->numLigne   = 0;
         $this->id         = $id;
         $this->alternance = $alternance;
-        $this->ordre      = $ordre;
+        
+        if (isset($_GET['numCol'])){
+            $this->ordre  = $_GET['numCol'];
+        } else {
+            $this->ordre  = $ordre;
+        }
+        
     }
     
     public function add_en_tete(){
@@ -30,13 +37,17 @@ class Table{
             if ($this->ordre == 0){
                 $tempCell = new Table_Cellule($value, 'th');
             } else {
-                $tempCell = new Table_Cellule($value, 'th', '', 1, $numCol);
+                $tempCell = new Table_Cellule($value, 'th', 1, $numCol);
             }
             $tempCells[] = $tempCell;
             $numCol++;
         }
         $this->en_tete = new Table_Ligne($tempCells);
-        return $this->en_tete;
+    }
+
+    public function add_att_en_tete($numCol, $attributs){
+        $this->en_tete->getCell($numCol-1)->setAttributs($attributs);
+        //$this->att_en_tete[$numCol] = $attributs;
     }
 
     public function add_ligne(){
@@ -67,10 +78,13 @@ class Table{
         $o = '<table id="'.$this->id.'">'."\n";
 
         if (!empty($this->caption)){
-            $o .= "\t".'<caption>'.$this->caption.'</caption>'."\n";
+            $o .= "\t".'<caption>'.
+                            $this->caption.
+                       '</caption>'."\n";
         }
 
         if (!empty($this->en_tete)){
+            //ajouter attributs
             $o .= $this->en_tete;
         }
         $cptLigne = 0;
@@ -153,11 +167,10 @@ class Table_Cellule{
 
     public function __construct($value, 
                                 $balise = 'td',
-                                $attributs = '',
                                 $fleche = 0,
                                 $numCol = 0) {
         
-        $this->attributs = $attributs;
+        $this->attributs = '';
         $this->balise    = $balise;
         $this->value     = $value;
         $this->fleche    = $fleche;
@@ -169,8 +182,14 @@ class Table_Cellule{
         if ($this->fleche != 0){
             $o .= '<a href="';
             $o .= recupereURLsansFleche($_SERVER['REQUEST_URI']);
-            $o .= '&amp;numCol='.$this->numCol.'">'.'<img src="'.CHEMIN_IMAGES.'flecheD.png"/>'.'</a>';
-            $o .= '<img src="'.CHEMIN_IMAGES.'flecheC.png"/>';
+            $o .= '&amp;numCol='.($this->numCol+1).'">'.
+                        '<img src="'.CHEMIN_IMAGES.'flecheD.png"/>'.
+                    '</a>';
+            $o .= '<a href="';
+            $o .= recupereURLsansFleche($_SERVER['REQUEST_URI']);
+            $o .= '&amp;numCol=-'.($this->numCol+1).'">'.
+                        '<img src="'.CHEMIN_IMAGES.'flecheC.png"/>'.
+                    '</a>';
         }
         $o .= '</'.$this->balise.'>'."\n";
 
@@ -182,17 +201,16 @@ class Table_Cellule{
     public function getValue(){
         return $this->value;
     }
-    public function getAttributs(){
-        return $this->attributs;
-    }
     public function setAttributs($attributs){
         $this->attributs = $attributs;
     }
 }
+
 function recupereURLsansFleche($url) {
     include_once CHEMIN_LIB.'string.php';
+
     if (!contains('numCol=', $url)){
-        return $url;
+        $o2 = $url;
     } else {
         $tabExplode = explode('&', $url);
         //print_r($tabExplode);
@@ -200,7 +218,7 @@ function recupereURLsansFleche($url) {
         for ($index = 1; $index < count($tabExplode)-1; $index++) {
             $o2 .= '&amp;'.$tabExplode[$index];
         }
-        return $o2;
     }
+    return $o2;
 }
 ?>
