@@ -14,18 +14,24 @@ class Liste{
     }
 
     public function add_value($value){
-        if ($this->type != 0 or $this->type != 1){
-            throw new Exception('Pas Cool');
+        if ($this->type != 0 and $this->type != 1){
+            throw new Exception("L'ajout de valeur par cette methode n'est pas autorisé
+                dans ce type de la liste.");
         }
-        $values[] = $value;
+        $this->values[] = $value;
     }
 
     public function add_values($therme, $definition){
-        $thermes[]     = $therme;
-        $definitions[] = $definition;
+        if ($this->type != 2){
+            throw new Exception("L'ajout de valeur par cette methode n'est pas autorisé
+                dans ce type de la liste.");
+        }
+        $this->thermes[]     = $therme;
+        $this->definitions[] = $definition;
     }
 
     public function __toString() {
+        //$o = 'hop';
         switch ($this->type){
             case 0:
                 $debut     = '<ul id="'.$this->id.'">';
@@ -49,6 +55,24 @@ class Liste{
                 break;
         }
 
+        switch ($this->type){
+            case 0:
+            case 1:
+                $o = $debut;
+                foreach ($this->values as $value) {
+                    $o .= $deb_ligne . $value . $fin_ligne;
+                }
+                $o .= $fin;
+                break;
+            case 2:
+                $o = $debut;
+                for ($i = 0; $i < count($this->thermes); $i++ ){
+                    $o .= $deb_therme . $this->thermes[$i]     . $fin_therme;
+                    $o .= $deb_def    . $this->definitions[$i] . $fin_def;
+                }
+                $o .= $fin;
+                break;
+        }
 
         return $o;
     }
