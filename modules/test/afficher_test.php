@@ -24,4 +24,6 @@ $list_def->add_values('test1', 'cecei est le test 1');
 $list_def->add_values('test2', 'celui la le secon');
 $list_def->add_values('test3', 'et voici le dernier enfin normalement cest bien fini');
 
+include_once CHEMIN_VUE.'page_test.php';
+
 ?>
