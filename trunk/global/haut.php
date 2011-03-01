@@ -12,6 +12,11 @@
 
 	<link rel="stylesheet" href="style/global.css" type="text/css" media="screen" />
 
+        <?php if ($_GET['module'] == 'forum'){
+            echo '<link rel="stylesheet" href="style/forum.css" type="text/css" media="screen" />';
+        }
+        ?>
+
 </head>
 
 <body>

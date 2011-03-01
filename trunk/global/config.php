@@ -19,4 +19,11 @@ define('DOSSIER_AVATAR', 'images/avatars/');
 define('AVATAR_LARGEUR_MAXI', 100);
 define('AVATAR_HAUTEUR_MAXI', 100);
 
+
+//Configuration pour le forum
+define('VISITEUR',1);
+define('INSCRIT',2);
+define('MODO',3);
+define('ADMIN',4);
+
 ?>

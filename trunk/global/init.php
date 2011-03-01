@@ -62,4 +62,10 @@ if (!utilisateur_est_connecte() && !empty($_COOKIE['id']) && !empty($_COOKIE['co
 }
 
 
+//Attribution des variables de session
+$lvl    =(isset($_SESSION['f_level']))?(int) $_SESSION['f_level']:1;
+$id     =(isset($_SESSION['f_id']))?(int) $_SESSION['f_id']:0;
+$pseudo =(isset($_SESSION['f_pseudo']))?$_SESSION['f_pseudo']:'';
+
+
 ?>
