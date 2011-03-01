@@ -20,4 +20,8 @@
 	</ul>
 	<?php } ?>
 
+        <ul>
+            <li><a href="index.php?module=forum&amp;action=index">Index du Forum</a></li>
+        </ul>
+
 </div>

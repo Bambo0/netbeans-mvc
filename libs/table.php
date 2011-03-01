@@ -16,7 +16,6 @@ class Table{
     public function  __construct($id, $alternance = 0, $ordre = 0) {
         $this->caption    = '';
         $this->lignes     = array();
-        //array("title","titre1"), array("data","titre2") : tableau de Table_Ligne
         $this->numLigne   = 0;
         $this->id         = $id;
         $this->alternance = $alternance;
